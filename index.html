@@ -3,14 +3,969 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Site</title>
+    <title>Bean & Brew — Artisan Coffee Shop</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        /* ── Reset & Base ─────────────────────────────── */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --espresso:  #3b1f0f;
+            --dark-roast:#5c3317;
+            --medium:    #8b5e3c;
+            --latte:     #c49a6c;
+            --cream:     #f5ede0;
+            --milk-foam: #fdf6ee;
+            --white:     #ffffff;
+            --text:      #2e1a0e;
+            --text-light:#7a5230;
+            --shadow:    rgba(59,31,15,.15);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: var(--milk-foam);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        img { display: block; max-width: 100%; }
+
+        /* ── Nav ──────────────────────────────────────── */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: .9rem 5%;
+            background: rgba(59,31,15,.92);
+            backdrop-filter: blur(8px);
+        }
+
+        .nav-logo {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--latte);
+            letter-spacing: .04em;
+            text-decoration: none;
+        }
+
+        .nav-logo span { color: var(--cream); }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--cream);
+            text-decoration: none;
+            font-family: 'Arial', sans-serif;
+            font-size: .9rem;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            opacity: .85;
+            transition: opacity .2s;
+        }
+
+        .nav-links a:hover { opacity: 1; color: var(--latte); }
+
+        /* ── Hero ─────────────────────────────────────── */
+        #hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 6rem 5% 4rem;
+            position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(ellipse at 20% 60%, rgba(139,94,60,.35) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 30%, rgba(92,51,23,.4) 0%, transparent 55%),
+                linear-gradient(160deg, var(--espresso) 0%, #2a1208 100%);
+        }
+
+        /* Decorative coffee-ring circles */
+        #hero::before, #hero::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid rgba(196,154,108,.15);
+            pointer-events: none;
+        }
+        #hero::before { width: 600px; height: 600px; top: -120px; right: -120px; }
+        #hero::after  { width: 400px; height: 400px; bottom: -80px; left: -80px; }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(196,154,108,.2);
+            border: 1px solid rgba(196,154,108,.4);
+            color: var(--latte);
+            font-family: 'Arial', sans-serif;
+            font-size: .78rem;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            padding: .4rem 1.1rem;
+            border-radius: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        #hero h1 {
+            font-size: clamp(2.8rem, 7vw, 5.5rem);
+            color: var(--cream);
+            line-height: 1.1;
+            margin-bottom: 1.2rem;
+            text-shadow: 0 2px 20px rgba(0,0,0,.4);
+        }
+
+        #hero h1 em {
+            font-style: normal;
+            color: var(--latte);
+        }
+
+        #hero p {
+            max-width: 520px;
+            color: rgba(245,237,224,.7);
+            font-size: 1.15rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: .85rem 2.2rem;
+            border-radius: 2rem;
+            font-family: 'Arial', sans-serif;
+            font-size: .9rem;
+            font-weight: 600;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: transform .2s, box-shadow .2s, background .2s;
+        }
+
+        .btn-primary {
+            background: var(--latte);
+            color: var(--espresso);
+            box-shadow: 0 4px 20px rgba(196,154,108,.4);
+        }
+
+        .btn-primary:hover {
+            background: #d4aa80;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(196,154,108,.5);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--cream);
+            border: 1.5px solid rgba(245,237,224,.5);
+            margin-left: 1rem;
+        }
+
+        .btn-outline:hover {
+            background: rgba(245,237,224,.08);
+            transform: translateY(-2px);
+        }
+
+        .hero-scroll {
+            position: absolute;
+            bottom: 2.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: .4rem;
+            color: rgba(245,237,224,.4);
+            font-family: 'Arial', sans-serif;
+            font-size: .75rem;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+        }
+
+        .hero-scroll::after {
+            content: '';
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(to bottom, rgba(245,237,224,.4), transparent);
+        }
+
+        /* ── Section shared ───────────────────────────── */
+        section { padding: 5rem 5%; }
+
+        .section-label {
+            display: inline-block;
+            font-family: 'Arial', sans-serif;
+            font-size: .75rem;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--medium);
+            margin-bottom: .6rem;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            color: var(--espresso);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .section-subtitle {
+            max-width: 560px;
+            color: var(--text-light);
+            font-size: 1.05rem;
+            margin-bottom: 3rem;
+        }
+
+        /* ── About strip ─────────────────────────────── */
+        #about {
+            background: var(--espresso);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            padding: 3.5rem 5%;
+        }
+
+        .about-stat {
+            text-align: center;
+            flex: 1 1 140px;
+        }
+
+        .about-stat strong {
+            display: block;
+            font-size: 2.4rem;
+            color: var(--latte);
+            line-height: 1;
+            margin-bottom: .3rem;
+        }
+
+        .about-stat span {
+            font-family: 'Arial', sans-serif;
+            font-size: .82rem;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: rgba(245,237,224,.6);
+        }
+
+        /* ── Menu ─────────────────────────────────────── */
+        #menu { background: var(--cream); }
+
+        .menu-header { max-width: 700px; }
+
+        .menu-tabs {
+            display: flex;
+            gap: .6rem;
+            flex-wrap: wrap;
+            margin-bottom: 2.5rem;
+        }
+
+        .tab-btn {
+            padding: .5rem 1.3rem;
+            border-radius: 2rem;
+            border: 1.5px solid var(--latte);
+            background: transparent;
+            color: var(--medium);
+            font-family: 'Arial', sans-serif;
+            font-size: .85rem;
+            cursor: pointer;
+            transition: background .2s, color .2s;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background: var(--dark-roast);
+            border-color: var(--dark-roast);
+            color: var(--cream);
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .menu-card {
+            background: var(--milk-foam);
+            border-radius: 1rem;
+            padding: 1.6rem;
+            border: 1px solid rgba(139,94,60,.12);
+            transition: transform .25s, box-shadow .25s;
+            position: relative;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px var(--shadow);
+        }
+
+        .menu-icon {
+            font-size: 2rem;
+            margin-bottom: .8rem;
+        }
+
+        .menu-card h3 {
+            font-size: 1.1rem;
+            color: var(--espresso);
+            margin-bottom: .3rem;
+        }
+
+        .menu-card p {
+            font-size: .9rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .menu-price {
+            font-family: 'Arial', sans-serif;
+            font-weight: 700;
+            color: var(--dark-roast);
+            font-size: 1rem;
+        }
+
+        .menu-badge {
+            position: absolute;
+            top: 1rem; right: 1rem;
+            background: var(--latte);
+            color: var(--espresso);
+            font-family: 'Arial', sans-serif;
+            font-size: .68rem;
+            font-weight: 700;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            padding: .25rem .6rem;
+            border-radius: 1rem;
+        }
+
+        /* ── Story ────────────────────────────────────── */
+        #story {
+            background: var(--milk-foam);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .story-visual {
+            position: relative;
+        }
+
+        .story-img-frame {
+            width: 100%;
+            aspect-ratio: 4/5;
+            border-radius: 1.5rem;
+            background:
+                radial-gradient(circle at 40% 40%, var(--medium) 0%, var(--dark-roast) 55%, var(--espresso) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+            box-shadow: 0 20px 60px var(--shadow);
+            overflow: hidden;
+        }
+
+        .story-accent {
+            position: absolute;
+            bottom: -1.5rem;
+            right: -1.5rem;
+            width: 140px;
+            height: 140px;
+            border-radius: 1rem;
+            background: var(--latte);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 1rem;
+            box-shadow: 0 8px 24px var(--shadow);
+        }
+
+        .story-accent strong {
+            font-size: 2rem;
+            color: var(--espresso);
+            line-height: 1;
+        }
+
+        .story-accent span {
+            font-family: 'Arial', sans-serif;
+            font-size: .72rem;
+            color: var(--dark-roast);
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            margin-top: .3rem;
+        }
+
+        .story-text .section-subtitle { margin-bottom: 1.5rem; }
+
+        .story-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: .8rem;
+            margin-bottom: 2rem;
+        }
+
+        .story-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: .75rem;
+            font-size: .95rem;
+            color: var(--text-light);
+        }
+
+        .story-list li::before {
+            content: '✦';
+            color: var(--latte);
+            flex-shrink: 0;
+            margin-top: .1rem;
+        }
+
+        /* ── Contact ─────────────────────────────────── */
+        #contact {
+            background: var(--cream);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .contact-info h2 { margin-bottom: .5rem; }
+
+        .contact-details {
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.4rem;
+        }
+
+        .contact-item {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .contact-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: .75rem;
+            background: var(--dark-roast);
+            color: var(--latte);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .contact-item h4 {
+            font-size: .8rem;
+            font-family: 'Arial', sans-serif;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--medium);
+            margin-bottom: .15rem;
+        }
+
+        .contact-item p {
+            font-size: .95rem;
+            color: var(--text);
+        }
+
+        /* Form */
+        .contact-form {
+            background: var(--milk-foam);
+            border-radius: 1.2rem;
+            padding: 2.2rem;
+            border: 1px solid rgba(139,94,60,.12);
+            box-shadow: 0 8px 32px var(--shadow);
+        }
+
+        .contact-form h3 {
+            font-size: 1.35rem;
+            color: var(--espresso);
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: .4rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            font-family: 'Arial', sans-serif;
+            font-size: .8rem;
+            font-weight: 600;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            color: var(--medium);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: .75rem 1rem;
+            border: 1.5px solid rgba(139,94,60,.2);
+            border-radius: .6rem;
+            background: var(--white);
+            color: var(--text);
+            font-family: 'Georgia', serif;
+            font-size: .95rem;
+            transition: border-color .2s, box-shadow .2s;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--latte);
+            box-shadow: 0 0 0 3px rgba(196,154,108,.15);
+        }
+
+        .form-group textarea { resize: vertical; min-height: 100px; }
+
+        .form-submit {
+            width: 100%;
+            padding: .9rem;
+            background: var(--dark-roast);
+            color: var(--cream);
+            font-family: 'Arial', sans-serif;
+            font-size: .9rem;
+            font-weight: 700;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            border: none;
+            border-radius: .6rem;
+            cursor: pointer;
+            transition: background .2s, transform .15s;
+            margin-top: .5rem;
+        }
+
+        .form-submit:hover {
+            background: var(--espresso);
+            transform: translateY(-1px);
+        }
+
+        .form-success {
+            display: none;
+            text-align: center;
+            padding: 2rem 1rem;
+            color: var(--dark-roast);
+        }
+
+        .form-success .success-icon {
+            font-size: 2.8rem;
+            margin-bottom: .6rem;
+        }
+
+        .form-success h4 {
+            font-size: 1.2rem;
+            margin-bottom: .4rem;
+        }
+
+        .form-success p { font-size: .95rem; color: var(--text-light); }
+
+        /* ── Footer ───────────────────────────────────── */
+        footer {
+            background: var(--espresso);
+            padding: 3rem 5% 2rem;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr;
+            gap: 2.5rem;
+        }
+
+        .footer-brand .nav-logo {
+            display: inline-block;
+            margin-bottom: .8rem;
+        }
+
+        .footer-brand p {
+            color: rgba(245,237,224,.55);
+            font-size: .9rem;
+            max-width: 260px;
+            line-height: 1.6;
+        }
+
+        .footer-col h4 {
+            color: var(--latte);
+            font-family: 'Arial', sans-serif;
+            font-size: .78rem;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .footer-col ul { list-style: none; }
+
+        .footer-col ul li {
+            margin-bottom: .5rem;
+        }
+
+        .footer-col ul li a {
+            color: rgba(245,237,224,.6);
+            text-decoration: none;
+            font-size: .9rem;
+            transition: color .2s;
+        }
+
+        .footer-col ul li a:hover { color: var(--latte); }
+
+        .footer-bottom {
+            background: rgba(0,0,0,.2);
+            padding: 1rem 5%;
+            text-align: center;
+            font-family: 'Arial', sans-serif;
+            font-size: .8rem;
+            color: rgba(245,237,224,.35);
+        }
+
+        /* ── Responsive ───────────────────────────────── */
+        @media (max-width: 900px) {
+            #story, #contact {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+
+            .story-visual { max-width: 420px; margin: 0 auto; }
+
+            footer {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .footer-brand { grid-column: 1 / -1; }
+        }
+
+        @media (max-width: 600px) {
+            nav { padding: .8rem 4%; }
+            .nav-links { gap: 1.2rem; }
+            .nav-links a { font-size: .78rem; }
+
+            .btn-outline { margin-left: 0; margin-top: .8rem; }
+            #hero p { font-size: 1rem; }
+
+            .form-row { grid-template-columns: 1fr; }
+
+            footer { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
-    <h1>Test Site</h1>
-    <p>A test website</p>
+
+    <!-- NAV -->
+    <nav>
+        <a href="#hero" class="nav-logo">Bean <span>&</span> Brew</a>
+        <ul class="nav-links">
+            <li><a href="#menu">Menu</a></li>
+            <li><a href="#story">Our Story</a></li>
+            <li><a href="#contact">Visit Us</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section id="hero">
+        <div class="hero-badge">Est. 2014 · Artisan Coffee</div>
+        <h1>Where Every Cup<br>Tells a <em>Story</em></h1>
+        <p>Handcrafted espresso, single-origin pour-overs, and house-made pastries — all in a space made for moments that matter.</p>
+        <div>
+            <a href="#menu" class="btn btn-primary">Explore Our Menu</a>
+            <a href="#contact" class="btn btn-outline">Find Us</a>
+        </div>
+        <div class="hero-scroll">Scroll</div>
+    </section>
+
+    <!-- STATS STRIP -->
+    <div id="about">
+        <div class="about-stat">
+            <strong>12+</strong>
+            <span>Origins Sourced</span>
+        </div>
+        <div class="about-stat">
+            <strong>40K</strong>
+            <span>Cups Served Monthly</span>
+        </div>
+        <div class="about-stat">
+            <strong>10</strong>
+            <span>Years Roasting</span>
+        </div>
+        <div class="about-stat">
+            <strong>100%</strong>
+            <span>Ethically Traded</span>
+        </div>
+    </div>
+
+    <!-- MENU -->
+    <section id="menu">
+        <div class="menu-header">
+            <span class="section-label">Our Menu</span>
+            <h2 class="section-title">Crafted with Care,<br>Served with Heart</h2>
+            <p class="section-subtitle">Every drink is made to order by our trained baristas using freshly roasted beans and seasonal ingredients.</p>
+        </div>
+
+        <div class="menu-tabs">
+            <button class="tab-btn active" onclick="filterMenu('all', this)">All</button>
+            <button class="tab-btn" onclick="filterMenu('espresso', this)">Espresso</button>
+            <button class="tab-btn" onclick="filterMenu('cold', this)">Cold Drinks</button>
+            <button class="tab-btn" onclick="filterMenu('food', this)">Food</button>
+        </div>
+
+        <div class="menu-grid" id="menuGrid">
+
+            <div class="menu-card" data-cat="espresso">
+                <div class="menu-badge">Bestseller</div>
+                <div class="menu-icon">☕</div>
+                <h3>Signature Latte</h3>
+                <p>Double espresso, steamed whole milk, house vanilla bean syrup</p>
+                <span class="menu-price">$6.50</span>
+            </div>
+
+            <div class="menu-card" data-cat="espresso">
+                <div class="menu-icon">🍫</div>
+                <h3>Mocha Noir</h3>
+                <p>Rich espresso, dark chocolate ganache, silky steamed milk</p>
+                <span class="menu-price">$7.00</span>
+            </div>
+
+            <div class="menu-card" data-cat="espresso">
+                <div class="menu-icon">🌿</div>
+                <h3>Cardamom Cortado</h3>
+                <p>Espresso with warm spiced cardamom milk, served short</p>
+                <span class="menu-price">$6.00</span>
+            </div>
+
+            <div class="menu-card" data-cat="espresso">
+                <div class="menu-icon">⬛</div>
+                <h3>Flat White</h3>
+                <p>Ristretto shots with velvety micro-foam milk</p>
+                <span class="menu-price">$5.50</span>
+            </div>
+
+            <div class="menu-card" data-cat="cold">
+                <div class="menu-badge">New</div>
+                <div class="menu-icon">🧊</div>
+                <h3>Cold Brew Float</h3>
+                <p>18-hour cold brew topped with house-made brown sugar ice cream</p>
+                <span class="menu-price">$8.00</span>
+            </div>
+
+            <div class="menu-card" data-cat="cold">
+                <div class="menu-icon">🍯</div>
+                <h3>Honey Oat Shaker</h3>
+                <p>Shaken espresso, oat milk, wildflower honey, hint of cinnamon</p>
+                <span class="menu-price">$7.50</span>
+            </div>
+
+            <div class="menu-card" data-cat="cold">
+                <div class="menu-icon">🫧</div>
+                <h3>Sparkling Brew</h3>
+                <p>Light roast pour-over chilled over sparkling water, citrus peel</p>
+                <span class="menu-price">$6.50</span>
+            </div>
+
+            <div class="menu-card" data-cat="food">
+                <div class="menu-badge">Fresh Daily</div>
+                <div class="menu-icon">🥐</div>
+                <h3>Almond Croissant</h3>
+                <p>Buttery layers, almond cream filling, toasted flake topping</p>
+                <span class="menu-price">$4.50</span>
+            </div>
+
+            <div class="menu-card" data-cat="food">
+                <div class="menu-icon">🍞</div>
+                <h3>Avocado Toast</h3>
+                <p>Sourdough, smashed avocado, everything seasoning, poached egg</p>
+                <span class="menu-price">$11.00</span>
+            </div>
+
+            <div class="menu-card" data-cat="food">
+                <div class="menu-icon">🍪</div>
+                <h3>Brown Butter Cookie</h3>
+                <p>House-baked, brown butter, sea salt flakes, dark chocolate chips</p>
+                <span class="menu-price">$3.50</span>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- STORY -->
+    <section id="story">
+        <div class="story-visual">
+            <div class="story-img-frame">☕</div>
+            <div class="story-accent">
+                <strong>★ 4.9</strong>
+                <span>2,400+ reviews</span>
+            </div>
+        </div>
+        <div class="story-text">
+            <span class="section-label">Our Story</span>
+            <h2 class="section-title">Small Batch.<br>Big Flavor.</h2>
+            <p class="section-subtitle">Bean & Brew started as a tiny corner cart in 2014. Today we're a neighborhood institution — still using the same obsessive approach to sourcing and craft.</p>
+            <ul class="story-list">
+                <li>Direct relationships with farms in Ethiopia, Colombia, and Guatemala</li>
+                <li>In-house roasting on a vintage 10kg Probat drum roaster</li>
+                <li>All syrups and pastries made from scratch in our kitchen each morning</li>
+                <li>Compostable packaging and zero-waste milk programs</li>
+            </ul>
+            <a href="#contact" class="btn btn-primary">Come Visit Us</a>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+        <div class="contact-info">
+            <span class="section-label">Visit Us</span>
+            <h2 class="section-title">We'd Love to<br>See You Soon</h2>
+            <p class="section-subtitle">Drop in for a coffee, reserve a table for a slow morning, or just say hello.</p>
+            <div class="contact-details">
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <div>
+                        <h4>Location</h4>
+                        <p>142 Maple Street, Suite 1<br>Brooklyn, NY 11201</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">🕐</div>
+                    <div>
+                        <h4>Hours</h4>
+                        <p>Mon – Fri: 7:00 am – 7:00 pm<br>Sat – Sun: 8:00 am – 6:00 pm</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📞</div>
+                    <div>
+                        <h4>Phone</h4>
+                        <p>(718) 555-0194</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">✉️</div>
+                    <div>
+                        <h4>Email</h4>
+                        <p>hello@beanandbrewnyc.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-form" id="contactCard">
+            <h3>Send Us a Message</h3>
+            <form id="contactForm" onsubmit="handleSubmit(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fname">First Name</label>
+                        <input type="text" id="fname" name="fname" placeholder="Jane" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lname">Last Name</label>
+                        <input type="text" id="lname" name="lname" placeholder="Doe" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="jane@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <select id="subject" name="subject">
+                        <option value="">Select a topic…</option>
+                        <option value="reservation">Table Reservation</option>
+                        <option value="event">Private Event</option>
+                        <option value="wholesale">Wholesale Inquiry</option>
+                        <option value="feedback">Feedback</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" placeholder="Tell us how we can help…" required></textarea>
+                </div>
+                <button type="submit" class="form-submit">Send Message</button>
+            </form>
+            <div class="form-success" id="formSuccess">
+                <div class="success-icon">☕</div>
+                <h4>Message Received!</h4>
+                <p>Thanks for reaching out. We'll get back to you within one business day.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-brand">
+            <a href="#hero" class="nav-logo">Bean <span>&</span> Brew</a>
+            <p>Artisan coffee and good vibes since 2014. Roasting with intention, serving with heart.</p>
+        </div>
+        <div class="footer-col">
+            <h4>Quick Links</h4>
+            <ul>
+                <li><a href="#menu">Menu</a></li>
+                <li><a href="#story">Our Story</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Follow Along</h4>
+            <ul>
+                <li><a href="#">Instagram</a></li>
+                <li><a href="#">Facebook</a></li>
+                <li><a href="#">TikTok</a></li>
+            </ul>
+        </div>
+    </footer>
+    <div class="footer-bottom">
+        &copy; 2026 Bean &amp; Brew. All rights reserved.
+    </div>
+
+    <script>
+        // Menu tab filter
+        function filterMenu(cat, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            document.querySelectorAll('.menu-card').forEach(card => {
+                const show = cat === 'all' || card.dataset.cat === cat;
+                card.style.display = show ? '' : 'none';
+            });
+        }
+
+        // Contact form submission
+        function handleSubmit(e) {
+            e.preventDefault();
+            document.getElementById('contactForm').style.display = 'none';
+            document.getElementById('formSuccess').style.display = 'block';
+        }
+
+        // Smooth nav highlight on scroll
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-links a');
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.style.color = link.getAttribute('href') === '#' + entry.target.id
+                            ? 'var(--latte)' : '';
+                    });
+                }
+            });
+        }, { threshold: 0.4 });
+
+        sections.forEach(s => observer.observe(s));
+    </script>
 </body>
 </html>
